@@ -58,11 +58,28 @@ public class CarritoServiceImplementation implements CarritoServiceDefinition{
 	@Override
 	public void calcularTotal(Carrito carrito) {
 		float total = 0;
+		
+		// 1. Instanciamos el gestor que creamos en el Paso 1
+		GestorFacturacion gestorFinanciero = new GestorFacturacion();
+
 		for(ProductoCarrito pc : carrito.getProductos()) {
-			total = total + pc.getProducto().getPrecio();
+			Producto producto = pc.getProducto();
+			int cantidad = pc.getCantidad();
+			
+			// Opcional: Podrías aplicar un descuento antes de los impuestos
+			// gestorFinanciero.aplicarDescuento(producto, 10); // Ejemplo: 10% de descuento
+			
+			// 2. Calculamos el impuesto para este producto específico
+			float valorImpuesto = gestorFinanciero.calcularImpuestos(producto);
+			
+			// 3. Calculamos el precio real (Precio base + Impuesto)
+			float precioConImpuesto = producto.getPrecio() + valorImpuesto;
+			
+			// 4. Sumamos al total multiplicando por la cantidad de productos (¡Importante!)
+			total = total + (precioConImpuesto * cantidad);
 		}
+		
 		carrito.setValor_total(total);
 	}
-
 
 }
